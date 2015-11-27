@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.examplenetworkmelon"
-        minSdkVersion 8
+        minSdkVersion 9
         targetSdkVersion 21
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_7

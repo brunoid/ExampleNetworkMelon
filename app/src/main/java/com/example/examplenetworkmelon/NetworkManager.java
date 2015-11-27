@@ -1,5 +1,13 @@
 package com.example.examplenetworkmelon;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,11 +15,6 @@ import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 
 public class NetworkManager {
 	private static NetworkManager instance;
@@ -32,6 +35,7 @@ public class NetworkManager {
 	
 	private NetworkManager() {
 		mExecutor = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUN_POOL_SIZE, KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS, mRequestQueue);
+		CookieHandler.setDefault(new CookieManager(new PersistentCookieStore(MyApplication.getContext()), CookiePolicy.ACCEPT_ALL));
 	}
 	
 	public interface OnResultListener<T> {
