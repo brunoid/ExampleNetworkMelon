@@ -32,6 +32,7 @@ public class NetworkManager {
 	LinkedBlockingQueue<Runnable> mRequestQueue = new LinkedBlockingQueue<Runnable>();
 	
 	Map<Context, List<NetworkRequest>> mRequestMap = new HashMap<Context,List<NetworkRequest>>();
+	List<NetworkRequest> mRequestList = new ArrayList<NetworkRequest>();
 	
 	private NetworkManager() {
 		mExecutor = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUN_POOL_SIZE, KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS, mRequestQueue);
@@ -59,6 +60,7 @@ public class NetworkManager {
 				break;
 			}
 			removeMap(request);
+			removeRequestList(request);
 		}
 	};
 	
@@ -84,6 +86,18 @@ public class NetworkManager {
 			}
 		}
 	}
+
+	public void cancelTag(Object tag) {
+		List<NetworkRequest> cancelList = new ArrayList<NetworkRequest>();
+		for (NetworkRequest req : mRequestList) {
+			if (tag == null || tag.equals(req.getTag())) {
+				cancelList.add(req);
+			}
+		}
+		for (NetworkRequest req : cancelList) {
+			req.cancel();
+		}
+	}
 	
 	private void addMap(NetworkRequest request) {
 		Context context = request.getContext();
@@ -105,16 +119,26 @@ public class NetworkManager {
 			}
 		}
 	}
+
+	private void addRequestList(NetworkRequest request) {
+		mRequestList.add(request);
+	}
+
+	private void removeRequestList(NetworkRequest request) {
+		mRequestList.remove(request);
+	}
 	
 	public <T> void getNetworkData(Context context, NetworkRequest<T> request) {
 		request.setNetworkManager(this);
 		request.setContext(context);		
 		addMap(request);
+		addRequestList(request);
 		mExecutor.execute(request);
 	}
 	
 	public void processCancel(NetworkRequest request) {
 		mRequestQueue.remove(request);
 		removeMap(request);
+		removeRequestList(request);
 	}
 }

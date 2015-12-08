@@ -1,15 +1,15 @@
 package com.example.examplenetworkmelon;
 
+import android.content.Context;
+
+import com.example.examplenetworkmelon.NetworkManager.OnResultListener;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import android.content.Context;
-
-import com.example.examplenetworkmelon.NetworkManager.OnResultListener;
 
 public abstract class NetworkRequest<T> implements Runnable {
 
@@ -59,6 +59,16 @@ public abstract class NetworkRequest<T> implements Runnable {
 	}
 
 	public void writeOutput(OutputStream conn) {
+	}
+
+	Object tag;
+
+	public void setTag(Object tag) {
+		this.tag = tag;
+	}
+
+	public Object getTag() {
+		return tag;
 	}
 
 	private boolean isCanceled = false;
